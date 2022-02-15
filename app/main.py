@@ -10,7 +10,7 @@ from .utils import load_config
 async def get_web_app():
 
     """
-        An entry point for web services (gunicorn e.t.c) 
+        An entry point for the python web services (gunicorn e.t.c) 
     """
 
     config: Dict = load_config(PROJECT_ROOT / "configs" / "base.yaml")

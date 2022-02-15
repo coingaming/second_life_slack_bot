@@ -22,4 +22,4 @@ EXPOSE 8080
 
 ADD --chown=$username:$username . .
 
-CMD ["python", "-m", "app"]
+CMD ["gunicorn", "-c", "configs/gunicorn.conf", "app.main:get_web_app"]
