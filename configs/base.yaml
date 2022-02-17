@@ -4,5 +4,5 @@ debug: true
 request_timeout: 10 # sec
 request_url: '/slack/events' # Slack will send HTTP POST requests corresponding to this Request URL endpoint
 home_app_view_delay: 60 # sec
-channel_to_post_advertisments: 'C0302G7LFMF'
+channel_to_post_advertisments: 'C02EVMHV37B'
 user_group: 'SJ2P31U1E'
