@@ -1,4 +1,5 @@
 import os
+import re
 import yaml
 from urllib.parse import urlparse, ParseResult
 from pathlib import Path
@@ -15,7 +16,7 @@ def load_config(path: str) -> Any:
     >>> PROJECT_ROOT: PosixPath = Path(__file__).parent.parent
     >>> config: Dict = load_config(PROJECT_ROOT / "configs" / "base.yaml")
     >>> isinstance(config, dict)
-    False
+    True
     """
 
     with Path(path).open() as fp:
@@ -76,6 +77,33 @@ def create_image_direct_url(file_info: Dict) -> str:
     url_parsed: ParseResult = urlparse(file_info['file']['permalink_public'])
     team_id, file_id, pub_secret = url_parsed.path.split('-')
     return f'{DIRECT_FILE_LINK_URL}{team_id}-{file_id}/{filename}?pub_secret={pub_secret}'
+
+def normalize_file_url(file_url: str) -> str:
+
+    """ Slack server refused file downloading if it contains spaces in file name
+    Error example: 'errors': ['downloading image failed [json-pointer:/blocks/2/image_url]']
+    Function removes any spaces in file name
+
+    >>> file_url:str = "https://files.slack.com/files-pri/T02V3SQNKHQ-F033W5BJ4QJ/Image    from iOS.jpg?pub_secret=911b4fd916"
+    >>> expected_file_url: str = "https://files.slack.com/files-pri/T02V3SQNKHQ-F033W5BJ4QJ/Image_from_iOS.jpg?pub_secret=911b4fd916"
+    >>> normalized_url: str = normalize_file_url(file_url)
+    >>> normalized_url == expected_file_url
+    True
+    """
+
+    parsed_url_result: ParseResult = urlparse(file_url)
+    path_elements: List = parsed_url_result.path.split('/')
+    old_file_name: str = path_elements[-1]
+    # remove extra spaces from the begin and end of the file name
+    removed_spaces_begin_end: str = old_file_name.strip()
+    # remove extra spaces
+    removed_all_extra_spaced: str = re.sub(r"\s\s+", " ", removed_spaces_begin_end)
+    # replace spaces with underscores
+    file_name_normalized: str = removed_all_extra_spaced.replace(" ", "_")
+    # replace old file name with normalized
+    path_elements[-1] = file_name_normalized
+    normalized_url: ParseResult = parsed_url_result._replace(path="/".join(element for element in path_elements))
+    return normalized_url.geturl()
 
 
 if __name__ == "__main__":
