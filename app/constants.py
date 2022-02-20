@@ -1,5 +1,5 @@
 
-DIRECT_FILE_LINK_URL: str = 'https://files.slack.com/files-pri'
+DIRECT_FILE_LINK_URL: str = 'https://files.slack.com'
 
 
 class AD_VIEW_INDENTS:

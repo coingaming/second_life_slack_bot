@@ -6,7 +6,7 @@ from .async_app import SecondlifeBotApp
 from .utils import create_image_direct_url, get_file_id
 from .settings import APP_SLACK_TOKEN
 from .ui import get_item_ad_blocks, get_stuff_specification_view, get_ad_confirmation_blocks, get_message_blocks, \
-	change_item_price_view
+	change_item_price_view, get_home_tab_view
 from .constants import AD_VIEW_INDENTS, POST_MESSAGES, BUTTON_ACTION_IDS, VIEW_IDS, \
 	EVENTS_IDS, COMMANDS_IDS, BLOCK_IDS, INPUT_ACTION_IDS
 
@@ -456,35 +456,37 @@ def events_handlers(app: SecondlifeBotApp, config: Dict=None) -> NoReturn:
 
 
 	@app.event(EVENTS_IDS.APP_HOME_OPENED)
-	async def on_app_home_opened(ack, body, client, logger):
+	async def on_app_home_opened(ack, event, client, logger):
 
 		"""
-			User opened appplication home tab
-			So far we handle only message tab to offer help view
+			User opened appplication home or message tab
 		"""
 
 		await ack()
-		tab: str = body['event']['tab']
-		if tab != 'messages':
-			# app home tab is not proceed for now
-			return
+		logger.info(f"User: {event['user']} thrown the event: {EVENTS_IDS.APP_HOME_OPENED}")
+		channel: str = event['channel']
+		tab: str = event['tab']
+		if tab == 'messages':
+			response: Dict = await client.chat_postMessage(
+				token=APP_SLACK_TOKEN,
+				channel=channel,
+				text=POST_MESSAGES.HOME_APP,
+				blocks=get_message_blocks()
+			)
 
-		logger.info(f"User: {body['event']['user']} thrown the event: {EVENTS_IDS.APP_HOME_OPENED}")
-		channel: str = body['event']['channel']
-		response: Dict = await client.chat_postMessage(
-			token=APP_SLACK_TOKEN,
-			channel=channel,
-			text=POST_MESSAGES.HOME_APP,
-			blocks=get_message_blocks()
-		)
-
-		await asyncio.sleep(config["home_app_view_delay"])
-		message_timestamp: str = response['ts']
-		await client.chat_delete(
-			token=APP_SLACK_TOKEN,
-			channel=channel,
-			ts=message_timestamp
-		)
+			await asyncio.sleep(config["home_app_view_delay"])
+			message_timestamp: str = response['ts']
+			await client.chat_delete(
+				token=APP_SLACK_TOKEN,
+				channel=channel,
+				ts=message_timestamp
+			)
+		elif tab == 'home':
+			user_id: str = event['user']
+			await client.views_publish(
+        	    user_id=user_id,
+				view=get_home_tab_view(user_id)
+        	)
 
 
 	@app.event(EVENTS_IDS.FILE_SHARED)

@@ -2,29 +2,85 @@ from typing import List, Dict, Optional
 from ..constants import AD_VIEW_INDENTS, BUTTON_ACTION_IDS, VIEW_IDS, BLOCK_IDS, INPUT_ACTION_IDS
 
 
+def get_home_tab_view(user_id) -> Dict:
+    view: Dict ={
+        "type": "home",
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Welcome, <@" + user_id + ">*"
+                }
+            },
+            {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: The application allows you to create an ad and post it to the #secondlife channel;"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: Interaction with the application is done through the *Messages tab*;"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: To start creating an ad, you need to either *upload a photo* (it will be displayed in the preview) or enter the */post* command (an ad without a preview);"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: If a user is interested in buying, he can click the *I want to buy* button;"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: After clicking the *I want to buy* button, a thread will be created that will indicate that the user wants to purchase the product;"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: If the author of the post provided a link to google drive, then the *Show more photos* button will appear, which will redirect to the resource;"
+                }
+            },
+			{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":black_small_square: Anyone in the usergroup #techops can change the price and mark the item as sold;"
+                }
+            },
+			{
+        	    "type": "section",
+        	    "text": {
+        	      "type": "mrkdwn",
+        	      "text": ":black_small_square: When the price changes, the old ad is deleted along with the thread;"
+        	    }
+        	},
+        ]
+    }
+    return view
+
+
 def get_message_blocks() -> List:
     blocks: List = [
         {
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*1️⃣ An ad contains photo* \n\n1) Upload photo from your computer; \n 2) Press appeared button *Create an advertisement*;\n3) Fill and submit the specification."
-			}
-		},
-		{
-			"type": "image",
-			"title": {
-				"type": "plain_text",
-				"text": "image1"
-			},
-			"image_url": "https://api.slack.com/img/blocks/bkb_template_images/onboardingComplex.jpg",
-			"alt_text": "image1"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "*2️⃣ An ad without photo* \n\n1) Enter */post* command; \n 2) Fill and submit the specification"
+				"text": ":information_source: How to create an ad: \n:black_small_square: Upload preview photo from your computer; \n:black_small_square: Press button *Create an advertisement*;\n:black_small_square: Fill and submit the specification; \n :white_small_square: To create an add without preview photo just enter the command */post*"
 			}
 		}
 	]
